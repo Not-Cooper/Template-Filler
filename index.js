@@ -32,16 +32,19 @@ function getTemplate()
 // Uses regex to create a new template string with imported data (sidenote: could change the values in the map to be a list of csv header values and loop through each value in data appending them how the user would like ie [first_name, last_name] for Name instead of just first_name. delimeter would need to be defined elsewhere)
 async function fillTemplate(data)
 {
-    const template = await TEMPLATE;
+    try{
+        const template = await TEMPLATE;
 
-    const newTemplate = template.replaceAll(/\[(.*?)\]/gm, (brackets) => {
-        return brackets.replaceAll(VALUE_REGEX, (matched) => {
-            lookupValue = VALUE_MAP[matched.replaceAll(/\[|\]/g, "")] 
-            return data[lookupValue] != undefined ? data[lookupValue] : "Zach";
-        })
-    });
-
-    return newTemplate;
+        const newTemplate = template.replaceAll(/\[(.*?)\]/gm, (brackets) => {
+            return brackets.replaceAll(VALUE_REGEX, (matched) => {
+                lookupValue = VALUE_MAP[matched.replaceAll(/\[|\]/g, "")] 
+                return data[lookupValue] != undefined ? data[lookupValue] : "Zach";
+            })
+        });
+        return newTemplate;
+    }catch(e){
+        throw error;
+    }
 }
 
 // Creates the cover letter pdf based on the json data passed to it (originates from the csv)
