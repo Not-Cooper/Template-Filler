@@ -11,5 +11,6 @@ Output is directed to the cover_letters directory
 # To Use
 npm install
 node index.js
+NOTE: May need to run twice so output directory is created first
 
 May try to turn this into an interactable page where users can import their own csv and templates and get pdfs from it (not sure how possible that last part is)

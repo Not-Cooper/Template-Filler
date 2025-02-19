@@ -84,6 +84,15 @@ function resetDir(directoryName)
     return new Promise((resolve, reject) => {
         fs.readdir(directoryName, (problem, files) => {
             if (problem) {
+                if (problem.errno==-4058){
+                    fs.mkdir(directoryName, (err) => {
+                        if (err) {
+                          console.error('Did not find output directory. Could not create:', err);
+                        } else {
+                          console.log('Did not find output directory. Created successdully');
+                        }
+                    });
+                }
                 reject(problem);
                 return;
             }
