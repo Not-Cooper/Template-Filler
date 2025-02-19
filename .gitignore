@@ -1,0 +1,10 @@
+# Project
+*.pdf
+
+# Node.js
+node_modules/
+
+# Logs
+logs
+*.log
+npm-debug.log*
