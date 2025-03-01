@@ -1,6 +1,26 @@
 {
+  "name": "templatefiller",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
   "dependencies": {
-    "csv-parser": "^3.2.0",
-    "pdfkit": "^0.16.0"
+    "express": "^4.21.2",
+    "filereader-stream": "^2.0.0",
+    "lodash": "^4.17.21",
+    "papaparse": "^5.5.2",
+    "pdfkit": "^0.16.0",
+    "process": "^0.11.10",
+    "stream": "^0.0.3",
+    "webpack": "^5.98.0"
+  },
+  "devDependencies": {
+    "webpack-cli": "^6.0.1"
   }
 }
