@@ -10,7 +10,9 @@ const baseURL = 'http://localhost:3000/templates';
     const inputContainer = document.getElementById('field-container');
 
     let csvData;
+    let templateInfo = {};
 
+    // On csv updated
     csvListener.addEventListener('change', function() {
         if (csvListener.files && csvListener.files.length > 0){
             parse(csvListener.files[0], {
@@ -25,12 +27,20 @@ const baseURL = 'http://localhost:3000/templates';
         }
     });
 
+    // On template updated
     templateListener.addEventListener('change', function() {
         if (templateListener.files && templateListener.files.length > 0){
             console.log("template given");
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const fileContent = event.target.result;
+                sendTemplate(fileContent);
+            };
+            reader.readAsText(templateListener.files[0]);
         }
     });
 
+    // On fill button click
     fillListener.addEventListener('click', function() {
         console.log("Fill button pressed");
         if (csvListener.files && csvListener.files.length > 0 && csvData){
@@ -41,23 +51,50 @@ const baseURL = 'http://localhost:3000/templates';
         }
     });
 
+    // On clear button click
     clearListener.addEventListener('click', function() {
         console.log("Clearing template files...");
         clearTemplates();
     });
 
+    // On inputs updated
+    inputContainer.addEventListener('input', function(event) {
+        templateInfo[event.target.name] = event.target.value;
+    });
+
     function createFieldInputs() {
         console.log("Now Input Template Values");
+        let csvFields = csvData['meta']['fields'];
+        csvFields.forEach(element => {
+            templateInfo[element] = '';
+            const label = document.createElement("label");
+            label.textContent = element;
+            const input = document.createElement("input");
+            input.type = "text";
+            input.name = element;
+            inputContainer.appendChild(label);
+            inputContainer.appendChild(input);
+            inputContainer.appendChild(document.createElement("br"));
+        });
     }
 
-    async function fillTemplates() {
-        // Option for transforming headers into something else might be useful (might not need to map from template to keys)
-        await fetch(baseURL + '/csv', {
+    async function sendTemplate(templateString) {
+        await fetch(baseURL + '/templates/send', {
             method: 'POST',
             headers: {
                 "Content-Type": 'application/json'
             },
-            body: JSON.stringify(csvData)
+            body: JSON.stringify({'template':templateString})
+        })
+    }
+
+    async function fillTemplates() {
+        await fetch(baseURL + '/templates', {
+            method: 'POST',
+            headers: {
+                "Content-Type": 'application/json'
+            },
+            body: JSON.stringify({'csvData':csvData, 'templateInfo': templateInfo})
         })
     }
 

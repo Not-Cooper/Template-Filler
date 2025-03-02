@@ -7,12 +7,20 @@ router.get('/', (req, res) => {
     res.send('route for templates');
 });
 
-router.post('/csv', (req, res) => {
-    const csv = req.body;
+router.post('/templates', (req, res) => {
+    const fillInfo = req.body;
 
-    parsed = templateFiller.parseCSV(csv);
+    parsed = templateFiller.fillTemplates(fillInfo);
 
     res.send(parsed);
+})
+
+router.post('/templates/send', (req, res) => {
+    const template = req.body.template;
+
+    templateFiller.setTemplate(template);
+    
+    res.send(template);
 })
 
 router.post('/templates/clear', (req, res) => {
