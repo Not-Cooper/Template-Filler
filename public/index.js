@@ -14,6 +14,7 @@ const baseURL = 'http://localhost:3000/templates';
 
     // On csv updated
     csvListener.addEventListener('change', function() {
+        inputContainer.innerHTML = "";
         if (csvListener.files && csvListener.files.length > 0){
             parse(csvListener.files[0], {
                 header: true,

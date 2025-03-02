@@ -33,7 +33,6 @@ function findReplace(template, data) {
     const newTemplate = template.replaceAll(/\[(.*?)\]/gm, (brackets) => {
         return brackets.replaceAll(valueRegex, (matched) => {
             lookupValue = valueMap[matched.replaceAll(/\[|\]/g, "")]
-            console.log(data[lookupValue]);
             return data[lookupValue];
         })
     });
