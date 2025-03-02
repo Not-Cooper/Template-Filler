@@ -1,14 +1,34 @@
 import { parse } from "papaparse";
 
-const baseURL = 'http://localhost:3000/templates/csv';
+const baseURL = 'http://localhost:3000/templates';
 
 (function() {
-    var fileListener = document.getElementById('csv-file');
+    var csvListener = document.getElementById('csv-file');
+    var templateListener = document.getElementById('template-file');
+    var fillListener = document.getElementById('fill-button');
+    var clearListener = document.getElementById('clear-files');
 
-    fileListener.addEventListener('change', function() {
-        if (fileListener.files && fileListener.files.length > 0){
-            parseCSVFile(fileListener.files[0]);
+    csvListener.addEventListener('change', function() {
+        if (csvListener.files && csvListener.files.length > 0){
+            console.log('csv given')
         }
+    });
+
+    templateListener.addEventListener('change', function() {
+        if (templateListener.files && templateListener.files.length > 0){
+            console.log("template given");
+        }
+    });
+
+    fillListener.addEventListener('click', function() {
+        console.log("Fill button pressed");
+        if (csvListener.files && csvListener.files.length > 0){
+            parseCSVFile(csvListener.files[0]);
+        }
+    });
+
+    clearListener.addEventListener('click', function() {
+        clearTemplates();
     });
 
     async function parseCSVFile(file) {
@@ -17,7 +37,7 @@ const baseURL = 'http://localhost:3000/templates/csv';
             header: true,
             download: true,
             complete: async function(results) {
-                fetch(baseURL, {
+                await fetch(baseURL + '/csv', {
                     method: 'POST',
                     headers: {
                         "Content-Type": 'application/json'
@@ -26,5 +46,11 @@ const baseURL = 'http://localhost:3000/templates/csv';
                 })
             }
         });
+    }
+
+    async function clearTemplates() {
+        await fetch(baseURL + '/templates/clear', {
+            method: 'POST'
+        })
     }
 })();

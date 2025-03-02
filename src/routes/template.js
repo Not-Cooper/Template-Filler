@@ -15,4 +15,10 @@ router.post('/csv', (req, res) => {
     res.send(parsed);
 })
 
+router.post('/templates/clear', (req, res) => {
+    parsed = templateFiller.clearTemplates();
+
+    res.send({"Cleared": "True"});
+})
+
 module.exports = router;
