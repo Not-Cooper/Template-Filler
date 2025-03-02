@@ -3,13 +3,24 @@ import { parse } from "papaparse";
 const baseURL = 'http://localhost:3000/templates';
 
 (function() {
-    var csvListener = document.getElementById('csv-file');
-    var templateListener = document.getElementById('template-file');
-    var fillListener = document.getElementById('fill-button');
-    var clearListener = document.getElementById('clear-files');
+    const csvListener = document.getElementById('csv-file');
+    const templateListener = document.getElementById('template-file');
+    const fillListener = document.getElementById('fill-button');
+    const clearListener = document.getElementById('clear-files');
+    const inputContainer = document.getElementById('field-container');
+
+    let csvData;
 
     csvListener.addEventListener('change', function() {
         if (csvListener.files && csvListener.files.length > 0){
+            parse(csvListener.files[0], {
+                header: true,
+                download: true,
+                complete: async function(results) {
+                    csvData = results;
+                    createFieldInputs();
+                }
+            });
             console.log('csv given')
         }
     });
@@ -22,30 +33,32 @@ const baseURL = 'http://localhost:3000/templates';
 
     fillListener.addEventListener('click', function() {
         console.log("Fill button pressed");
-        if (csvListener.files && csvListener.files.length > 0){
-            parseCSVFile(csvListener.files[0]);
+        if (csvListener.files && csvListener.files.length > 0 && csvData){
+            fillTemplates();
+        }
+        else{
+            console.log("No file given");
         }
     });
 
     clearListener.addEventListener('click', function() {
+        console.log("Clearing template files...");
         clearTemplates();
     });
 
-    async function parseCSVFile(file) {
+    function createFieldInputs() {
+        console.log("Now Input Template Values");
+    }
+
+    async function fillTemplates() {
         // Option for transforming headers into something else might be useful (might not need to map from template to keys)
-        parse(file, {
-            header: true,
-            download: true,
-            complete: async function(results) {
-                await fetch(baseURL + '/csv', {
-                    method: 'POST',
-                    headers: {
-                        "Content-Type": 'application/json'
-                    },
-                    body: JSON.stringify(results)
-                })
-            }
-        });
+        await fetch(baseURL + '/csv', {
+            method: 'POST',
+            headers: {
+                "Content-Type": 'application/json'
+            },
+            body: JSON.stringify(csvData)
+        })
     }
 
     async function clearTemplates() {
