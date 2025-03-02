@@ -1,5 +1,5 @@
 const express = require('express');
-const templateFiller = require('../controllers/templateFiller');
+const templateFiller = require('../controllers/templateFiller.js');
 const router = express.Router();
 
 // Define a route

@@ -4,7 +4,7 @@ const path = require('path');
 const app = express();
 
 //middleware
-app.use(express.json());
+app.use(express.json({limit: '50mb'}));
 
 // static and main index
 app.use('/dist', express.static(path.join(__dirname + '/dist')));
@@ -17,7 +17,7 @@ app.get('/', (req, res) => {
 
 
 // routes
-const templates = require('./routes/template');
+const templates = require('./src/routes/template');
 
 app.use('/templates', templates);
 

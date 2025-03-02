@@ -1,4 +1,4 @@
-import { parse, unparse } from "papaparse";
+import { parse } from "papaparse";
 
 const baseURL = 'http://localhost:3000/templates/csv';
 
@@ -12,34 +12,19 @@ const baseURL = 'http://localhost:3000/templates/csv';
     });
 
     async function parseCSVFile(file) {
+        // Option for transforming headers into something else might be useful (might not need to map from template to keys)
         parse(file, {
+            header: true,
             download: true,
             complete: async function(results) {
-                const res = await fetch(baseURL, {
-                        method: 'POST',
-                        headers: {
-                            "Content-Type": 'application/json'
-                        },
-                        body: JSON.stringify(results)
-                    })
-                console.log(await res.json());
+                fetch(baseURL, {
+                    method: 'POST',
+                    headers: {
+                        "Content-Type": 'application/json'
+                    },
+                    body: JSON.stringify(results)
+                })
             }
-            // step: function(results, parser) {
-            //     console.log("Row data:", results.data);
-            //     console.log("Row errors:", results.errors);
-            // },
-            // complete: async function(results, file) {
-            //     console.log("Parsing complete:", results, file);
-            //     const res = await fetch(baseURL, {
-            //         method: 'POST',
-            //         headers: {
-            //             "Content-Type": 'application/json'
-            //         },
-            //         body: JSON.stringify(results)
-            //     })
-            //     console.log(res);
-            // }
-        })
+        });
     }
-
 })();
