@@ -15,6 +15,11 @@ router.post('/templates', (req, res) => {
     res.send(parsed);
 })
 
+// zip the templates and send to user
+router.get('/templates', (req, res) => {
+    res.send();
+})
+
 router.post('/templates/send', (req, res) => {
     const template = req.body.template;
 

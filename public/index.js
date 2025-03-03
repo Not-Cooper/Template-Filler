@@ -8,6 +8,7 @@ const baseURL = 'http://localhost:3000/templates';
     const fillListener = document.getElementById('fill-button');
     const clearListener = document.getElementById('clear-files');
     const inputContainer = document.getElementById('field-container');
+    const customFieldContainer = document.getElementById('custom-fields');
 
     let csvData;
     let templateInfo = {};
@@ -22,6 +23,7 @@ const baseURL = 'http://localhost:3000/templates';
                 complete: async function(results) {
                     csvData = results;
                     createFieldInputs();
+                    createCustomField();
                 }
             });
             console.log('csv given')
@@ -63,6 +65,10 @@ const baseURL = 'http://localhost:3000/templates';
         templateInfo[event.target.name] = event.target.value;
     });
 
+    // customFieldContainer.addEventListener('input', function(event) {
+    //     templateInfo[event.target.name] = event.target.value;
+    // });
+
     function createFieldInputs() {
         console.log("Now Input Template Values");
         let csvFields = csvData['meta']['fields'];
@@ -77,6 +83,17 @@ const baseURL = 'http://localhost:3000/templates';
             inputContainer.appendChild(input);
             inputContainer.appendChild(document.createElement("br"));
         });
+    }
+
+    function createCustomField() {
+        const definitionInput = document.createElement("input");
+        const valueInput = document.createElement("input");
+        definitionInput.type = "text";
+        definitionInput.name = "definition";
+        valueInput.type = "text";
+        valueInput.name = "value";
+        customFieldContainer.appendChild(definitionInput);
+        customFieldContainer.appendChild(valueInput);
     }
 
     async function sendTemplate(templateString) {

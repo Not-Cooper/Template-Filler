@@ -33,7 +33,7 @@ function findReplace(template, data) {
     const newTemplate = template.replaceAll(/\[(.*?)\]/gm, (brackets) => {
         return brackets.replaceAll(valueRegex, (matched) => {
             lookupValue = valueMap[matched.replaceAll(/\[|\]/g, "")]
-            return data[lookupValue];
+            return data[lookupValue] != undefined ? data[lookupValue] : lookupValue; // This could mean that the user created custom replace values
         })
     });
     return newTemplate;
@@ -85,4 +85,9 @@ async function clearTemplates() {
     });
 }
 
-module.exports = {fillTemplates, clearTemplates, setTemplate};
+// Zip the templates in filledTemplates and send to user (could then clear the filled templates folder - maybe try to find a way to remove the zip file after some time as well)
+function zipTemplates() {
+
+}
+
+module.exports = {fillTemplates, clearTemplates, setTemplate, zipTemplates};
