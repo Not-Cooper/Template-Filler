@@ -23,7 +23,6 @@ const baseURL = 'http://localhost:3000/templates';
                 complete: async function(results) {
                     csvData = results;
                     createFieldInputs();
-                    createCustomField();
                 }
             });
             console.log('csv given')
@@ -65,9 +64,40 @@ const baseURL = 'http://localhost:3000/templates';
         templateInfo[event.target.name] = event.target.value;
     });
 
-    // customFieldContainer.addEventListener('input', function(event) {
-    //     templateInfo[event.target.name] = event.target.value;
-    // });
+    customFieldContainer.addEventListener('input', function(event) {
+        templateInfo[event.target.name] = event.target.value;
+    });
+
+    customFieldContainer.addEventListener('click', function(event) {
+        if (event.target.name == "new-value"){
+            const definitionInput = document.createElement("input");
+            definitionInput.type = "text";
+            definitionInput.id = "new-key"
+            const submitButton = document.createElement("button");
+            submitButton.name = "submit";
+            submitButton.id = "submit-button";
+            submitButton.textContent = "Submit";
+            customFieldContainer.appendChild(definitionInput);
+            customFieldContainer.appendChild(submitButton);
+            customFieldContainer.appendChild(document.createElement("br"));
+        }
+        else if (event.target.name == "submit"){
+            console.log("submit pressed");
+            const label = document.createElement("label");
+            const newValue = document.getElementById("new-key").value;
+            label.textContent = newValue;
+            const input = document.createElement("input");
+            input.type = "text";
+            input.name = newValue;
+            input.placeholder = "Template Replace Key";
+            templateInfo[newValue] = '';
+            customFieldContainer.appendChild(label);
+            customFieldContainer.appendChild(input);
+            document.getElementById("new-key").remove();
+            document.getElementById(event.target.id).remove();
+            customFieldContainer.appendChild(document.createElement("br"));
+        }
+    });
 
     function createFieldInputs() {
         console.log("Now Input Template Values");
@@ -83,17 +113,6 @@ const baseURL = 'http://localhost:3000/templates';
             inputContainer.appendChild(input);
             inputContainer.appendChild(document.createElement("br"));
         });
-    }
-
-    function createCustomField() {
-        const definitionInput = document.createElement("input");
-        const valueInput = document.createElement("input");
-        definitionInput.type = "text";
-        definitionInput.name = "definition";
-        valueInput.type = "text";
-        valueInput.name = "value";
-        customFieldContainer.appendChild(definitionInput);
-        customFieldContainer.appendChild(valueInput);
     }
 
     async function sendTemplate(templateString) {
