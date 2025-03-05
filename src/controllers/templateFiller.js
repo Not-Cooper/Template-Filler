@@ -1,6 +1,8 @@
-const fs = require('fs');
+const fs = require('fs/promises');
 const path = require('path');
 const pdfkit = require('pdfkit');
+const JSZip = require('jszip');
+const {createWriteStream} = require('fs');
 
 const OUTPUTFOLDER = './src/filledTemplates/';
 
@@ -16,7 +18,7 @@ async function fillTemplates(result) {
     csvData.map(element => {
         const output = path.join(OUTPUTFOLDER, element['company'] + ".pdf");
         const doc = new pdfkit();
-        doc.pipe(fs.createWriteStream(output));
+        doc.pipe(createWriteStream(output));
         doc .fontSize(12)
             .text(findReplace(template, element), 100, 100);
         doc.end();
@@ -56,38 +58,37 @@ function setTemplate(newTemplate) {
 }
 
 async function clearTemplates() {
-    return new Promise((resolve, reject) => {
-        fs.readdir(OUTPUTFOLDER, (problem, files) => {
-            if (problem) {
-                if (problem.errno==-4058){
-                    fs.mkdir(OUTPUTFOLDER, (err) => {
-                        if (err) {
-                          console.error('Did not find output directory. Could not create:', err);
-                        } else {
-                          console.log('Did not find output directory. Created successdully');
-                        }
-                    });
-                }
-                reject(problem);
-                return;
-            }
-    
+    return new Promise(async (resolve, reject) => {
+        try {
+            const files = await fs.readdir(OUTPUTFOLDER);
             for (const file of files){
-                fs.unlink(path.join(OUTPUTFOLDER, file), (problem) => {
-                    if (problem) {
-                        reject(problem);
-                        return;
-                    }
-                });
+                fs.unlink(path.join(OUTPUTFOLDER, file));
             }
             resolve();
-        });
+        }
+        catch(err) {
+            if (err.errno==-4058){
+                await fs.mkdir(OUTPUTFOLDER);
+                console.log('Did not find output directory. Created successdully');
+            }
+            reject(err);
+            return;
+        }
     });
 }
 
 // Zip the templates in filledTemplates and send to user (could then clear the filled templates folder - maybe try to find a way to remove the zip file after some time as well)
-function zipTemplates() {
+async function zipTemplates() {
+    const zip = new JSZip();
 
+    const files = await fs.readdir(OUTPUTFOLDER);
+
+    for (const file of files){
+        const buffer = await fs.readFile(OUTPUTFOLDER + file)
+        zip.file(file, buffer);
+    }
+    const content = await zip.generateAsync({type:"nodebuffer"});
+    await fs.writeFile("example.zip", content);
 }
 
 module.exports = {fillTemplates, clearTemplates, setTemplate, zipTemplates};

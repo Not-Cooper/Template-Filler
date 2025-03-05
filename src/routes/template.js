@@ -7,10 +7,11 @@ router.get('/', (req, res) => {
     res.send('route for templates');
 });
 
-router.post('/templates', (req, res) => {
+router.post('/templates', async (req, res) => {
     const fillInfo = req.body;
 
-    parsed = templateFiller.fillTemplates(fillInfo);
+    parsed = await templateFiller.fillTemplates(fillInfo);
+    templateFiller.zipTemplates();
 
     res.send(parsed);
 })
