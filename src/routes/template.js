@@ -1,6 +1,7 @@
 const express = require('express');
 const templateFiller = require('../controllers/templateFiller.js');
 const router = express.Router();
+const fs = require("fs");
 
 // Define a route
 router.get('/', (req, res) => {
@@ -11,9 +12,13 @@ router.post('/templates', async (req, res) => {
     const fillInfo = req.body;
 
     parsed = await templateFiller.fillTemplates(fillInfo);
-    templateFiller.zipTemplates();
+    await templateFiller.zipTemplates();
 
-    res.send(parsed);
+    res.setHeader('Content-Type', 'application/zip');
+    res.setHeader('Content-disposition', 'attachment; filename=' + 'example.zip');
+    const fileStream = fs.createReadStream('./example.zip');
+    templateFiller.clearTemplates();
+    fileStream.pipe(res);
 })
 
 // zip the templates and send to user
@@ -30,7 +35,7 @@ router.post('/templates/send', (req, res) => {
 })
 
 router.post('/templates/clear', (req, res) => {
-    parsed = templateFiller.clearTemplates();
+    templateFiller.clearTemplates();
 
     res.send({"Cleared": "True"});
 })

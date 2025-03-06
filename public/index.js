@@ -126,13 +126,23 @@ const baseURL = 'http://localhost:3000/templates';
     }
 
     async function fillTemplates() {
-        await fetch(baseURL + '/templates', {
+        const response = await fetch(baseURL + '/templates', {
             method: 'POST',
             headers: {
                 "Content-Type": 'application/json'
             },
             body: JSON.stringify({'csvData':csvData, 'templateInfo': templateInfo})
-        })
+        });
+        
+        let blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'filename.zip'; // Set the desired filename
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
     }
 
     async function clearTemplates() {
