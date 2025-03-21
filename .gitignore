@@ -4,6 +4,19 @@
 # Node.js
 node_modules/
 
+# Nextjs
+target
+dist
+logs
+public
+.cache
+.vscode
+.DS_Store
+.idea
+.next
+yarn-error.log
+npm-debug.log
+
 # Logs
 logs
 *.log
